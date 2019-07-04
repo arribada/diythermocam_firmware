@@ -31,6 +31,18 @@ Go to Windows -> Preferences -> Arduino and **set the Private Library Path** to 
 
 **Import the project** with File -> Import -> General -> Existing Projects into Workspace, select the root directory of this repo and click Finish.
 
+**Update the project properties** by right clicking the project and changing the following:
+* Under **Arduino**:
+    * Set Board to "Teensy 3.6"
+    * Set Keyboard Layout to "US International"
+    * Set Optimize to "Debug"
+    * Set CPU Speed to "240 MHz (Overclock)"
+    * Set USB Type to "Serial"
+* Under **C/C++ Build** -> **Environment**:
+    * Update each environment variable to match your installation
+* Under **C/C++ General** -> **Paths and Symbols**:
+    * Update each entry to match your installation under **Assembly**, **GNU C** and **GNU C++**.
+
 Now you should be able to build the project with Arduino -> Verify and upload it to the Thermocam with Arduino -> Upload Sketch. Have fun!
 
 ----------
