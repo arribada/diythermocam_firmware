@@ -117,6 +117,7 @@ void createSDName(char* filename, boolean folder) {
 			strncpy(&filename[12], buffer, 2);
 		else
 			strcpy(&filename[12], buffer);
+		filename[13] = '0';
 	}
 }
 
@@ -272,7 +273,7 @@ void saveVideoFrame(char* filename, char* dirname) {
 /* Proccess video frames */
 void processVideoFrames(int framesCaptured, char* dirname) {
 	char buffer[30];
-	char filename[] = "00000.DAT";
+	char filename[] = "00000000000000.DAT";
 	int framesConverted = 0;
 
 	//Display title
@@ -303,9 +304,13 @@ void processVideoFrames(int framesCaptured, char* dirname) {
 		if (videoSave != videoSave_processing)
 			break;
 
-		//Get filename
-		frameFilename(filename, framesConverted);
-		strcpy(&filename[5], ".DAT");
+		//Get filename from frame number
+//		frameFilename(filename, framesConverted);
+//		strcpy(&filename[5], ".DAT");
+
+		//Get filename using current date/time
+		createSDName(filename);
+		strcpy(&filename[14], ".DAT");
 
 		//Load Raw data
 		loadRawData(filename, dirname);
@@ -329,9 +334,11 @@ void processVideoFrames(int framesCaptured, char* dirname) {
 		displayInfos();
 		hqRes = hqRes_old;
 
-		//Save frame to image file
-		strcpy(&filename[5], ".BMP");
-		saveVideoFrame(filename, dirname);
+		//Save frame to image file (frame number name)
+		//strcpy(&filename[5], ".BMP");
+
+		//Save frame to image file (time/date name)
+		strcpy(&filename[14], ".BMP");
 
 		//Font color
 		display_setBackColor(200, 200, 200);
