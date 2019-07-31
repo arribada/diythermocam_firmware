@@ -135,12 +135,26 @@ void createSDName(char* filename, boolean folder) {
 }
 
 /* Creates a bmp file for the thermal image */
-void createBMPFile(char* filename) {
+void createBMPFile(char* filename, byte bmpSize) {
 	//File extension and open
 	strcpy(&filename[14], ".BMP");
 	sdFile.open(filename, O_RDWR | O_CREAT | O_AT_END);
 	//Write the BMP header
-	sdFile.write((uint8_t*)bmp_header_large, 66);
+	switch (bmpSize)
+	{
+	case bmp_tiny:
+		sdFile.write((uint8_t*)bmp_header_tiny, 66);
+		break;
+	case bmp_small:
+		sdFile.write((uint8_t*)bmp_header_small, 66);
+		break;
+	case bmp_middle:
+		sdFile.write((uint8_t*)bmp_header_middle, 66);
+		break;
+	case bmp_large:
+		sdFile.write((uint8_t*)bmp_header_large, 66);
+		break;
+	}
 }
 
 /* Creates a JPEG file for the visual image */
@@ -476,7 +490,7 @@ void saveRawData(bool isImage, char* name, uint16_t framesCaptured) {
 void imgSaveEnd() {
 	//Save Bitmap image if activated or in visual / combined mode
 	if (convertEnabled || (displayMode == displayMode_visual) || (displayMode == displayMode_combined))
-		saveBuffer(saveFilename);
+		saveBufferNoResize(saveFilename);
 
 	//Refresh free space
 	refreshFreeSpace();
@@ -493,7 +507,7 @@ void saveBuffer(char* filename) {
 	startAltClockline();
 
 	//Create file
-	createBMPFile(filename);
+	createBMPFile(filename, bmp_large);
 
 	//Teensy 3.1/3.2 - Save the 160x120 array as 640x480
 	if (teensyVersion == teensyVersion_old)
@@ -541,6 +555,66 @@ void saveBuffer(char* filename) {
 			sdFile.write(sdBuffer, 1280);
 			sdFile.write(sdBuffer, 1280);
 		}
+		//De-allocate space
+		free(sdBuffer);
+	}
+
+	//Close file
+	sdFile.close();
+
+	//End SD Transmission
+	endAltClockline();
+}
+
+/* Saves the content of the screen buffer to the sd card without resizing */
+void saveBufferNoResize(char* filename) {
+	unsigned short pixel;
+
+	//Otherwise switch to clockline
+	startAltClockline();
+
+	if (teensyVersion != teensyVersion_old)
+	{
+		uint8_t* sdBuffer;
+
+		//Save the 80x60 array
+		if ((leptonVersion != leptonVersion_3_0_shutter) && (leptonVersion != leptonVersion_3_5_shutter)) {
+			//Create file
+			createBMPFile(filename, bmp_tiny);
+
+			//Allocate space for sd buffer
+			sdBuffer = (uint8_t*)calloc(80, sizeof(uint8_t));
+			//Save 80x60 pixels
+			for (int16_t y = 59; y >= 0; y--) {
+				//Write them into the sd buffer
+				for (uint8_t x = 0; x < 80; x++) {
+					pixel = smallBuffer[(y * 80) + x];
+					sdBuffer[x * 2] = pixel & 0x00FF;
+					sdBuffer[(x * 2) + 1] = (pixel & 0xFF00) >> 8;
+				}
+				sdFile.write(sdBuffer, 80);
+				sdFile.write(sdBuffer, 80);
+			}
+		//Save the 160x120 array
+		} else {
+			//Create file
+			createBMPFile(filename, bmp_small);
+
+			//Allocate space for sd buffer
+			sdBuffer = (uint8_t*)calloc(160, sizeof(uint8_t));
+			//Save 160x120 pixels
+			for (int16_t y = 119; y >= 0; y--) {
+				//Write them into the sd buffer
+				for (uint8_t x = 0; x < 160; x++) {
+					pixel = smallBuffer[(y * 160) + x];
+					sdBuffer[x * 2] = pixel & 0x00FF;
+					sdBuffer[(x * 2) + 1] = (pixel & 0xFF00) >> 8;
+				}
+				sdFile.write(sdBuffer, 160);
+				sdFile.write(sdBuffer, 160);
+			}
+		}
+
 		//De-allocate space
 		free(sdBuffer);
 	}

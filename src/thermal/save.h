@@ -27,6 +27,7 @@ void imgSaveEnd();
 void imgSaveStart();
 void processVideoFrames(int framesCaptured, char* dirname);
 void saveBuffer(char* filename);
+void saveBufferNoResize(char* filename);
 void saveRawData(bool isImage, char* name, uint16_t framesCaptured = 0);
 void saveVideoFrame(char* filename, char* dirname);
 

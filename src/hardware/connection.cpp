@@ -788,7 +788,7 @@ void saveFrame() {
 	//Save Bitmap image if activated
 	if (convertEnabled) {
 		displayInfos();
-		saveBuffer(saveFilename);
+		saveBufferNoResize(saveFilename);
 	}
 
 	//Refresh free space

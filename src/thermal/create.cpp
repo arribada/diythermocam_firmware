@@ -704,8 +704,8 @@ void createThermalImg(bool small) {
 		gaussianFilter();
 
 	//Teensy 3.6 - Resize to big buffer when HQRes and not preview
-	if ((teensyVersion == teensyVersion_new) && (!small) && (hqRes))
-		smallToBigBuffer();
+//	if ((teensyVersion == teensyVersion_new) && (!small) && (hqRes))
+//		smallToBigBuffer();
 
 	//Convert lepton data to RGB565 colors
 	if (!videoSave)

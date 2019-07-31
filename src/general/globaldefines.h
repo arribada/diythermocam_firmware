@@ -277,6 +277,12 @@ extern "C" {
 #define camera_save   1
 #define camera_serial 2
 
+//Bitmap header sizes
+#define bmp_tiny 	0
+#define bmp_small   1
+#define bmp_middle	2
+#define bmp_large 	3
+
 #ifdef __cplusplus
 }
 #endif
