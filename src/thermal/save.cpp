@@ -593,7 +593,6 @@ void saveBufferNoResize(char* filename) {
 					sdBuffer[(x * 2) + 1] = (pixel & 0xFF00) >> 8;
 				}
 				sdFile.write(sdBuffer, 80);
-				sdFile.write(sdBuffer, 80);
 			}
 		//Save the 160x120 array
 		} else {
@@ -610,7 +609,6 @@ void saveBufferNoResize(char* filename) {
 					sdBuffer[x * 2] = pixel & 0x00FF;
 					sdBuffer[(x * 2) + 1] = (pixel & 0xFF00) >> 8;
 				}
-				sdFile.write(sdBuffer, 160);
 				sdFile.write(sdBuffer, 160);
 			}
 		}
